@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visa Benefit Assistant - AI-Powered Card Insights</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a237e;
+            --primary-light: #534bae;
+            --primary-dark: #000051;
+            --secondary: #ff6f00;
+            --secondary-light: #ffa040;
+            --secondary-dark: #c43e00;
+            --text-light: #f5f5f5;
+            --text-dark: #212121;
+            --bg-light: #f8f9fa;
+            --success: #4caf50;
+            --warning: #ff9800;
+            --danger: #f44336;
+            --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --border-radius: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: var(--text-light);
+            padding: 1.5rem 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo i {
+            font-size: 2.2rem;
+            color: var(--secondary-light);
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .security-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        /* Main content */
+        main {
+            padding: 2rem 0 4rem;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .hero h2 {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto 2rem;
+            color: #555;
+        }
+
+        /* Card input section */
+        .card-input-section {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2.5rem;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 3rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .card-input-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .card-input-container i {
+            position: absolute;
+            left: 16px;
+            color: var(--primary-light);
+            font-size: 1.2rem;
+        }
+
+        .card-input {
+            width: 100%;
+            padding: 16px 16px 16px 50px;
+            border: 2px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 1.1rem;
+            transition: all 0.3s;
+        }
+
+        .card-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(26, 35, 126, 0.1);
+        }
+
+        .input-note {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .input-note i {
+            color: var(--success);
+        }
+
+        .btn {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: var(--border-radius);
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn:hover {
+            background: var(--secondary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(255, 111, 0, 0.2);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn i {
+            font-size: 1.2rem;
+        }
+
+        .btn-block {
+            width: 100%;
+        }
+
+        /* Benefits section */
+        .section-title {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid var(--secondary);
+            display: inline-block;
+        }
+
+        .benefits-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .benefit-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s;
+            border-left: 5px solid var(--primary);
+        }
+
+        .benefit-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .benefit-card.featured {
+            border-left-color: var(--secondary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .featured-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--secondary);
+            color: white;
+            padding: 5px 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border-bottom-left-radius: 8px;
+        }
+
+        .benefit-icon {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .benefit-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            color: var(--primary);
+        }
+
+        .benefit-description {
+            color: #555;
+            margin-bottom: 1.2rem;
+        }
+
+        .benefit-details {
+            background: #f9f9f9;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .benefit-details h4 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        /* AI Recommendation */
+        .ai-recommendation {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            margin-bottom: 3rem;
+            box-shadow: var(--card-shadow);
+        }
+
+        .ai-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 1.5rem;
+        }
+
+        .ai-header i {
+            font-size: 2.5rem;
+            color: var(--secondary-light);
+        }
+
+        .ai-header h3 {
+            font-size: 1.8rem;
+        }
+
+        .recommendation-content {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .recommendation-text {
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+
+        .context-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        /* Disclaimer */
+        .disclaimer {
+            background: #fff8e1;
+            border-left: 5px solid var(--warning);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 3rem;
+        }
+
+        .disclaimer h4 {
+            color: var(--warning);
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Loading animation */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .spinner {
+            border: 5px solid rgba(26, 35, 126, 0.1);
+            border-top: 5px solid var(--primary);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Footer */
+        footer {
+            background: var(--primary-dark);
+            color: var(--text-light);
+            padding: 2.5rem 0;
+            text-align: center;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .footer-links a {
+            color: #ddd;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--secondary-light);
+        }
+
+        .copyright {
+            font-size: 0.9rem;
+            color: #aaa;
+            margin-top: 1rem;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .security-badge {
+                margin-top: 10px;
+            }
+            
+            .hero h2 {
+                font-size: 2rem;
+            }
+            
+            .benefits-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .card-input-section {
+                padding: 1.5rem;
+            }
+            
+            .ai-recommendation {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <i class="fas fa-credit-card"></i>
+                <h1>Visa Benefit Assistant</h1>
+            </div>
+            <div class="security-badge">
+                <i class="fas fa-shield-alt"></i>
+                <span>100% Secure • No Data Stored</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Hero section -->
+        <section class="hero">
+            <h2>Discover Your Visa Card Benefits</h2>
+            <p>AI-powered insights to help you maximize your card's potential. Simply enter your card number to see personalized benefits and recommendations.</p>
+        </section>
+
+        <!-- Card input section -->
+        <section class="card-input-section">
+            <h3 class="section-title">Enter Your Card Details</h3>
+            <div class="input-group">
+                <label for="card-number">Visa Card Number</label>
+                <div class="card-input-container">
+                    <i class="fas fa-credit-card"></i>
+                    <input type="text" id="card-number" class="card-input" placeholder="4111 1111 1111 1111" maxlength="19">
+                </div>
+                <p class="input-note">
+                    <i class="fas fa-shield-alt"></i> Your data is secure. No card information is stored.
+                </p>
+            </div>
+            
+            <div class="input-group">
+                <label for="user-context">Optional: Tell us about yourself for personalized recommendations</label>
+                <input type="text" id="user-context" class="card-input" placeholder="E.g., Student near IIT Chennai, Frequent traveler, etc.">
+            </div>
+            
+            <button id="get-benefits" class="btn btn-block">
+                <i class="fas fa-robot"></i> Analyze My Card Benefits
+            </button>
+        </section>
+
+        <!-- Loading indicator -->
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <h3>Analyzing your card benefits...</h3>
+            <p>Our AI is retrieving and summarizing your benefits</p>
+        </div>
+
+        <!-- Benefits display section -->
+        <section id="benefits-section" style="display: none;">
+            <h3 class="section-title">Your Card Benefits</h3>
+            <div class="benefits-container" id="benefits-container">
+                <!-- Benefits will be dynamically inserted here -->
+            </div>
+
+            <!-- AI Recommendation section -->
+            <div class="ai-recommendation" id="ai-recommendation">
+                <div class="ai-header">
+                    <i class="fas fa-robot"></i>
+                    <h3>AI-Personalized Recommendation</h3>
+                </div>
+                <div class="recommendation-content">
+                    <p class="recommendation-text" id="recommendation-text">
+                        <!-- AI recommendation will be inserted here -->
+                    </p>
+                    <div id="context-badges">
+                        <!-- Context badges will be inserted here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Disclaimer -->
+            <div class="disclaimer">
+                <h4><i class="fas fa-exclamation-triangle"></i> Important Disclaimer</h4>
+                <p>This tool is for informational purposes only. No real card data is stored or transmitted. All information displayed is based on publicly available benefit data and AI-generated summaries. Please refer to your cardholder agreement for official terms and conditions. Always contact your card issuer for the most accurate and up-to-date information regarding your benefits.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container footer-content">
+            <div class="footer-logo">
+                <i class="fas fa-credit-card"></i>
+                <span>Visa Benefit Assistant</span>
+            </div>
+            <div class="footer-links">
+                <a href="#"><i class="fas fa-shield-alt"></i> Privacy Policy</a>
+                <a href="#"><i class="fas fa-file-contract"></i> Terms of Use</a>
+                <a href="#"><i class="fas fa-question-circle"></i> FAQ</a>
+                <a href="https://developer.visa.com" target="_blank"><i class="fas fa-external-link-alt"></i> Visa Developer</a>
+            </div>
+            <p class="copyright">© 2023 Visa Benefit Assistant. This is a demonstration tool. Not affiliated with Visa Inc.</p>
+        </div>
+    </footer>
+
+    <script>
+        // DOM Elements
+        const cardNumberInput = document.getElementById('card-number');
+        const userContextInput = document.getElementById('user-context');
+        const getBenefitsBtn = document.getElementById('get-benefits');
+        const loadingDiv = document.getElementById('loading');
+        const benefitsSection = document.getElementById('benefits-section');
+        const benefitsContainer = document.getElementById('benefits-container');
+        const aiRecommendation = document.getElementById('ai-recommendation');
+        const recommendationText = document.getElementById('recommendation-text');
+        const contextBadges = document.getElementById('context-badges');
+
+        // Format card number input
+        cardNumberInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+            let formattedValue = '';
+            
+            for (let i = 0; i < value.length; i++) {
+                if (i > 0 && i % 4 === 0) {
+                    formattedValue += ' ';
+                }
+                formattedValue += value[i];
+            }
+            
+            e.target.value = formattedValue.substring(0, 19);
+        });
+
+        // Sample card benefits data
+        const benefitsData = {
+            '411111': {
+                cardName: "Visa Signature Premium",
+                benefits: [
+                    {
+                        title: "Travel Insurance",
+                        description: "Comprehensive travel insurance coverage for trips purchased with your card.",
+                        icon: "fas fa-plane",
+                        details: "Coverage includes trip cancellation, trip interruption, and baggage delay. Maximum coverage: $10,000 per trip.",
+                        category: "travel",
+                        priority: 5
+                    },
+                    {
+                        title: "Extended Warranty",
+                        description: "Extends manufacturer's warranty by 1 year on eligible items.",
+                        icon: "fas fa-clock",
+                        details: "Applies to items with original warranty of 3 years or less. Maximum coverage: $10,000 per item.",
+                        category: "shopping",
+                        priority: 4
+                    },
+                    {
+                        title: "Purchase Protection",
+                        description: "Covers eligible purchases against damage or theft for 90 days.",
+                        icon: "fas fa-shield-alt",
+                        details: "Covers up to $500 per claim and $50,000 per account. Claims must be filed within 90 days of incident.",
+                        category: "shopping",
+                        priority: 4
+                    },
+                    {
+                        title: "Dining Rewards",
+                        description: "Get 5% cashback on dining at select restaurants worldwide.",
+                        icon: "fas fa-utensils",
+                        details: "Valid at over 10,000 restaurants globally. Maximum cashback: $50 per month.",
+                        category: "lifestyle",
+                        priority: 3
+                    },
+                    {
+                        title: "Concierge Service",
+                        description: "24/7 personal concierge to assist with travel, dining, and entertainment bookings.",
+                        icon: "fas fa-concierge-bell",
+                        details: "Free service for cardholders. Can assist with hard-to-get reservations and event tickets.",
+                        category: "lifestyle",
+                        priority: 4
+                    },
+                    {
+                        title: "Airport Lounge Access",
+                        description: "Complimentary access to over 1,000 airport lounges worldwide.",
+                        icon: "fas fa-couch",
+                        details: "Includes Priority Pass Select membership. Allows 4 free visits per year.",
+                        category: "travel",
+                        priority: 5
+                    },
+                    {
+                        title: "Return Protection",
+                        description: "Get refunds for eligible items stores won't take back within 90 days.",
+                        icon: "fas fa-undo",
+                        details: "Covers up to $300 per item, maximum $1,000 per year. Original receipt required.",
+                        category: "shopping",
+                        priority: 3
+                    }
+                ]
+            },
+            '422222': {
+                cardName: "Visa Platinum Student",
+                benefits: [
+                    {
+                        title: "Student Discounts",
+                        description: "Exclusive discounts on textbooks, software, and educational resources.",
+                        icon: "fas fa-graduation-cap",
+                        details: "Up to 30% off at participating retailers. Valid with student ID verification.",
+                        category: "education",
+                        priority: 5
+                    },
+                    {
+                        title: "No Foreign Transaction Fees",
+                        description: "Pay no fees on purchases made outside your home country.",
+                        icon: "fas fa-globe",
+                        details: "0% foreign transaction fee on all international purchases.",
+                        category: "travel",
+                        priority: 4
+                    },
+                    {
+                        title: "Ride-Sharing Credit",
+                        description: "Monthly credit for Uber and other ride-sharing services.",
+                        icon: "fas fa-car",
+                        details: "$10 monthly credit for Uber rides. Applies automatically to your account.",
+                        category: "lifestyle",
+                        priority: 3
+                    },
+                    {
+                        title: "Streaming Service Credit",
+                        description: "Monthly credit for popular streaming services.",
+                        icon: "fas fa-tv",
+                        details: "$7.99 monthly credit for Netflix, Spotify, or Disney+. One service per month.",
+                        category: "entertainment",
+                        priority: 3
+                    },
+                    {
+                        title: "Purchase Protection",
+                        description: "Covers eligible purchases against damage or theft for 90 days.",
+                        icon: "fas fa-shield-alt",
+                        details: "Covers up to $300 per claim and $25,000 per account.",
+                        category: "shopping",
+                        priority: 4
+                    },
+                    {
+                        title: "Cell Phone Protection",
+                        description: "Covers your cell phone against damage or theft when you pay your bill with this card.",
+                        icon: "fas fa-mobile-alt",
+                        details: "Up to $600 per claim with $25 deductible. Maximum 2 claims per year.",
+                        category: "insurance",
+                        priority: 4
+                    }
+                ]
+            },
+            '433333': {
+                cardName: "Visa Infinite Travel",
+                benefits: [
+                    {
+                        title: "Global Entry/TSA PreCheck Credit",
+                        description: "$100 statement credit for Global Entry or TSA PreCheck application fee.",
+                        icon: "fas fa-passport",
+                        details: "Credit applies once every 4 years. Must pay application fee with this card.",
+                        category: "travel",
+                        priority: 5
+                    },
+                    {
+                        title: "Airline Fee Credit",
+                        description: "$200 annual credit for airline incidental fees.",
+                        icon: "fas fa-suitcase-rolling",
+                        details: "Covers baggage fees, seat upgrades, and in-flight purchases. Must select one airline.",
+                        category: "travel",
+                        priority: 5
+                    },
+                    {
+                        title: "Hotel Elite Status",
+                        description: "Automatic elite status with major hotel chains.",
+                        icon: "fas fa-hotel",
+                        details: "Includes Hilton Honors Gold Status and Marriott Bonvoy Gold Elite Status.",
+                        category: "travel",
+                        priority: 4
+                    },
+                    {
+                        title: "Premium Rental Car Insurance",
+                        description: "Primary rental car coverage with no deductible.",
+                        icon: "fas fa-car",
+                        details: "Covers theft and damage up to $75,000. Valid for rentals up to 31 days.",
+                        category: "insurance",
+                        priority: 4
+                    }
+                ]
+            }
+        };
+
+        // Get benefits button click handler
+        getBenefitsBtn.addEventListener('click', function() {
+            const cardNumber = cardNumberInput.value.replace(/\s/g, '');
+            const userContext = userContextInput.value.trim();
+            
+            // Validate card number (basic Visa validation)
+            if (!cardNumber || cardNumber.length < 16 || !cardNumber.startsWith('4')) {
+                alert('Please enter a valid Visa card number starting with 4');
+                return;
+            }
+            
+            // Show loading animation
+            loadingDiv.style.display = 'block';
+            benefitsSection.style.display = 'none';
+            
+            // Simulate API call delay
+            setTimeout(() => {
+                simulateBenefitsAnalysis(cardNumber, userContext);
+            }, 1500);
+        });
+
+        // Simulate benefits analysis (in real app, this would call an API)
+        function simulateBenefitsAnalysis(cardNumber, userContext) {
+            // Hide loading, show results
+            loadingDiv.style.display = 'none';
+            benefitsSection.style.display = 'block';
+            
+            // Determine card type based on first 6 digits
+            const cardPrefix = cardNumber.substring(0, 6);
+            let cardData;
+            
+            if (cardPrefix.startsWith('411111')) {
+                cardData = benefitsData['411111'];
+            } else if (cardPrefix.startsWith('422222')) {
+                cardData = benefitsData['422222'];
+            } else if (cardPrefix.startsWith('433333')) {
+                cardData = benefitsData['433333'];
+            } else {
+                // Default to premium card for demo
+                cardData = benefitsData['411111'];
+            }
+            
+            // Clear previous benefits
+            benefitsContainer.innerHTML = '';
+            
+            // Display benefits
+            cardData.benefits.forEach((benefit, index) => {
+                const isFeatured = index === 0; // First benefit is featured
+                
+                const benefitCard = document.createElement('div');
+                benefitCard.className = `benefit-card ${isFeatured ? 'featured' : ''}`;
+                
+                if (isFeatured) {
+                    benefitCard.innerHTML = `
+                        <div class="featured-badge">TOP RECOMMENDATION</div>
+                        <div class="benefit-icon"><i class="${benefit.icon}"></i></div>
+                        <h4 class="benefit-title">${benefit.title}</h4>
+                        <p class="benefit-description">${benefit.description}</p>
+                        <div class="benefit-details">
+                            <h4>Key Details:</h4>
+                            <p>${benefit.details}</p>
+                        </div>
+                    `;
+                } else {
+                    benefitCard.innerHTML = `
+                        <div class="benefit-icon"><i class="${benefit.icon}"></i></div>
+                        <h4 class="benefit-title">${benefit.title}</h4>
+                        <p class="benefit-description">${benefit.description}</p>
+                        <div class="benefit-details">
+                            <h4>Key Details:</h4>
+                            <p>${benefit.details}</p>
+                        </div>
+                    `;
+                }
+                
+                benefitsContainer.appendChild(benefitCard);
+            });
+            
+            // Generate AI recommendation based on user context
+            generateAIRecommendation(cardData, userContext, cardPrefix);
+        }
+
+        // Generate AI recommendation
+        function generateAIRecommendation(cardData, userContext, cardPrefix) {
+            let recommendation = '';
+            let contextTags = [];
+            
+            // Base recommendation based on card type
+            if (cardPrefix.startsWith('411111')) {
+                recommendation = "Based on your <strong>Visa Signature Premium</strong> card, I recommend focusing on the <strong>Travel Insurance</strong> benefit. ";
+                contextTags.push("Premium Card", "High-Value Benefits");
+                
+                if (userContext.toLowerCase().includes('student')) {
+                    recommendation += "As a student, you'll also find the <strong>Dining Rewards</strong> valuable for affordable meals near campus. ";
+                    contextTags.push("Student Lifestyle");
+                }
+                
+                if (userContext.toLowerCase().includes('travel') || userContext.toLowerCase().includes('frequent flyer')) {
+                    recommendation += "Since you mentioned travel, maximize the <strong>Airport Lounge Access</strong> for more comfortable layovers. ";
+                    contextTags.push("Frequent Traveler");
+                }
+                
+                if (userContext.toLowerCase().includes('chennai') || userContext.toLowerCase().includes('iit')) {
+                    recommendation += "For IIT Chennai students, the <strong>Concierge Service</strong> can help discover local dining and entertainment options. ";
+                    contextTags.push("Chennai Location");
+                }
+                
+                if (userContext.toLowerCase().includes('shop') || userContext.toLowerCase().includes('purchase')) {
+                    recommendation += "For frequent shoppers, the <strong>Extended Warranty</strong> and <strong>Purchase Protection</strong> provide excellent coverage. ";
+                    contextTags.push("Frequent Shopper");
+                }
+                
+                recommendation += "These benefits provide the highest value for your card type and lifestyle.";
+                
+            } else if (cardPrefix.startsWith('422222')) {
+                recommendation = "Your <strong>Visa Platinum Student</strong> card is optimized for academic life. I highly recommend using the <strong>Student Discounts</strong> benefit. ";
+                contextTags.push("Student Card", "Educational Benefits");
+                
+                if (userContext.toLowerCase().includes('chennai') || userContext.toLowerCase().includes('iit')) {
+                    recommendation += "As an IIT Chennai student, these discounts can significantly reduce textbook and software costs. ";
+                    contextTags.push("IIT Chennai");
+                }
+                
+                if (userContext.toLowerCase().includes('travel') || userContext.toLowerCase().includes('international')) {
+                    recommendation += "The <strong>No Foreign Transaction Fees</strong> benefit is perfect for international trips or online purchases from foreign retailers. ";
+                    contextTags.push("International Use");
+                }
+                
+                if (userContext.toLowerCase().includes('tech') || userContext.toLowerCase().includes('phone')) {
+                    recommendation += "Given your interest in technology, the <strong>Cell Phone Protection</strong> provides valuable coverage for your devices. ";
+                    contextTags.push("Tech User");
+                }
+                
+                recommendation += "Combine these with the <strong>Streaming Service Credit</strong> for a well-rounded student experience.";
+                
+            } else if (cardPrefix.startsWith('433333')) {
+                recommendation = "With your <strong>Visa Infinite Travel</strong> card, you have premium travel benefits. Top recommendation is the <strong>Global Entry/TSA PreCheck Credit</strong>. ";
+                contextTags.push("Travel Card", "Premium Benefits");
+                
+                if (userContext.toLowerCase().includes('travel') || userContext.toLowerCase().includes('frequent flyer')) {
+                    recommendation += "As a frequent traveler, the <strong>Airline Fee Credit</strong> and <strong>Hotel Elite Status</strong> will enhance your travel experience significantly. ";
+                    contextTags.push("Frequent Traveler");
+                }
+                
+                if (userContext.toLowerCase().includes('rental') || userContext.toLowerCase().includes('car')) {
+                    recommendation += "The <strong>Premium Rental Car Insurance</strong> provides primary coverage with no deductible for your car rentals. ";
+                    contextTags.push("Car Rental User");
+                }
+                
+                recommendation += "These benefits are designed to make travel smoother and more rewarding.";
+            }
+            
+            // If no specific context provided, give general recommendation
+            if (!userContext) {
+                recommendation += " <strong>Pro tip:</strong> Add details about your lifestyle for even more personalized recommendations.";
+                contextTags.push("General User");
+            }
+            
+            // Display recommendation
+            recommendationText.innerHTML = recommendation;
+            
+            // Display context badges
+            contextBadges.innerHTML = '';
+            contextTags.forEach(tag => {
+                const badge = document.createElement('span');
+                badge.className = 'context-badge';
+                badge.textContent = tag;
+                contextBadges.appendChild(badge);
+            });
+        }
+
+        // Initialize with a demo card number
+        window.addEventListener('DOMContentLoaded', () => {
+            // For demo purposes, pre-fill a card number
+            cardNumberInput.value = '4111 1111 1111 1111';
+            userContextInput.value = 'Student near IIT Chennai, frequent shopper';
+            
+            // Also pre-load benefits for demo
+            setTimeout(() => {
+                getBenefitsBtn.click();
+            }, 500);
+        });
+
+        // Add sample card options for quick testing
+        document.addEventListener('DOMContentLoaded', function() {
+            const cardInputSection = document.querySelector('.card-input-section');
+            
+            const sampleCards = document.createElement('div');
+            sampleCards.className = 'sample-cards';
+            sampleCards.innerHTML = `
+                <div style="margin-top: 20px; padding-top: 20px; border-top: 1px dashed #ddd;">
+                    <p style="font-size: 0.9rem; color: #666; margin-bottom: 10px;"><strong>Try sample cards:</strong></p>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button class="sample-card-btn" data-card="4111111111111111" data-context="Student near IIT Chennai">Visa Signature</button>
+                        <button class="sample-card-btn" data-card="4222222222222222" data-context="College student">Visa Student</button>
+                        <button class="sample-card-btn" data-card="4333333333333333" data-context="Frequent traveler">Visa Infinite</button>
+                    </div>
+                </div>
+            `;
+            
+            cardInputSection.appendChild(sampleCards);
+            
+            // Add CSS for sample buttons
+            const style = document.createElement('style');
+            style.textContent = `
+                .sample-card-btn {
+                    background: #e8eaf6;
+                    border: 1px solid #c5cae9;
+                    color: #1a237e;
+                    padding: 8px 16px;
+                    border-radius: 6px;
+                    cursor: pointer;
+                    font-size: 0.9rem;
+                    transition: all 0.2s;
+                }
+                .sample-card-btn:hover {
+                    background: #c5cae9;
+                }
+            `;
+            document.head.appendChild(style);
+            
+            // Add event listeners to sample card buttons
+            document.querySelectorAll('.sample-card-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const card = this.getAttribute('data-card');
+                    const context = this.getAttribute('data-context');
+                    
+                    // Format the card number
+                    let formattedCard = '';
+                    for (let i = 0; i < card.length; i++) {
+                        if (i > 0 && i % 4 === 0) {
+                            formattedCard += ' ';
+                        }
+                        formattedCard += card[i];
+                    }
+                    
+                    cardNumberInput.value = formattedCard;
+                    userContextInput.value = context;
+                    
+                    // Trigger analysis
+                    getBenefitsBtn.click();
+                });
+            });
+        });
+    </script>
+</body>
+</html>
